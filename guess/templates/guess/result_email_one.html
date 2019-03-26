@@ -1,0 +1,8 @@
+<h4>Hey {{Result.author }}</h4><br>
+<h4>The library type is: {{ Result.libtype }}</h4>
+<p>GuessLib took {{ Result.analysis_time }} minutes to determine the library type, impressive!</p>
+<p>This was determined after subsetting your FASTQ files, that beforehand had an average quality of <a href="{{ Domain }}{% url 'guess-about'%}">{{ Result.fin_avg_quality }}</a>,<br>to {{ Result.nr_of_seqs_fout }} amount of reads with an average quality of <a href="{{ Domain }}{% url 'guess-about'%}">{{ Result.fout_avg_quality }}</a>. <br>After that, the GuessLib <a href="{{ Domain }}{% url 'guess-about' %}">algorithm</a> aligned your file against the {{ Result.refgenome }} reference sequence. <br>We used {{ Result.collected_pairs }} reads and found {{ Result.inwfwd }} inward-forward and {{ Result.inwrvs}} inward-reverse.</p>
+
+For more information visit your job (note that you must be logged in):
+
+{% if request.is_secure %}https://{% else %}http://{% endif %}{{ Domain }}{% url 'result-detail' Result.pk %}

@@ -1,0 +1,250 @@
+{% extends "guess/base.html" %}
+{% load static %}
+{% block content2 %}
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          <a class="mr-2" href="{% url 'profile' %}">{{ object.author }}</a>
+          {{ object.title }}
+          <small class="text-muted">{{ object.date_submit }}</small>
+        </div>
+        <h2 class="article-title">The most probable library type is {{ object.libtype }}</h2>
+        {% if object.single %}
+        <p class="article-content">
+          GuessLib took {{ object.analysis_time }} minutes to determine the library type, impressive!
+
+          This was determined after subsetting your FASTQ file, that beforehand had an average quality of <a href="{% url 'guess-about'%}">{{ object.fin_avg_quality }}</a>, to {{ object.nr_of_seqs_fout }} amount of reads with an average quality of <a href="{% url 'guess-about'%}">{{ object.fout_avg_quality }}</a>.
+
+          After that, the GuessLib <a href="{% url 'guess-about' %}">algorithm</a> aligned your file against the {{ object.refgenome }} reference sequence.
+
+          We used {{ object.collected_pairs }} reads and found {{ object.inwfwd }} forward and {{ object.inwrvs}} reverse reads.
+
+          {% if object.libtype == "SR" %}
+          <img src="{% static 'guess/libtype_figs/SR.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <table class="minimalistBlack">
+          <thead>
+          <tr>
+          <th><span style="font-weight:bold">Program</span></th>
+          <th>Salmon &amp; Sailfish</th>
+          <th>Tophat &amp; Cufflinks</th>
+          <th>Trinity </th>
+          <th>Hisat2</th>
+          <th>Kallisto</th>
+          <th>FeatureCounts</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+          <td><span style="font-weight:bold">Lib type </span></td>
+          <td>-l SR</td>
+          <td>--library-type fr-firststrand</td>
+          <td>--SS_lib_type 'R'</td>
+          <td>--rna-strandness 'R'</td>
+          <td>-single --rf-stranded</td>
+          <td>-s 2</td>
+          </tr>
+          </tfoot>
+          </table>
+          {% elif object.libtype == "SF"%}
+          <img src="{% static 'guess/libtype_figs/SF.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <table class="minimalistBlack">
+          <thead>
+          <tr>
+          <th><span style="font-weight:bold">Program</span></th>
+          <th>Salmon &amp; Sailfish</th>
+          <th>Tophat &amp; Cufflinks</th>
+          <th>Trinity </th>
+          <th>Hisat2</th>
+          <th>Kallisto</th>
+          <th>FeatureCounts</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+          <td><span style="font-weight:bold">Lib type </span></td>
+          <td>-l SF</td>
+          <td>--library-type fr-secondstrand</td>
+          <td>--SS_lib_type 'F'</td>
+          <td>--rna-strandness 'F'</td>
+          <td>-single --fr-stranded</td>
+          <td>-s 1</td>
+          </tr>
+          </tfoot>
+          </table>
+          {% elif object.libtype == "U"%}
+          <img src="{% static 'guess/libtype_figs/SF.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <table class="minimalistBlack">
+          <thead>
+          <tr>
+          <th><span style="font-weight:bold">Program</span></th>
+          <th>Salmon &amp; Sailfish</th>
+          <th>Tophat &amp; Cufflinks</th>
+          <th>Trinity </th>
+          <th>Hisat2</th>
+          <th>Kallisto</th>
+          <th>FeatureCounts</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+          <td><span style="font-weight:bold">Lib type </span></td>
+          <td>-l IU</td>
+          <td>--library-type fr-unstranded</td>
+          <td><i>default</i></td>
+          <td><i>default</i></td>
+          <td><i>default</i></td>
+          <td>-s 0</td>
+          </tr>
+          </tfoot>
+          </table>
+          {% endif %}
+        </p>
+        {% else %}
+        <p class="article-content">
+          GuessLib took {{ object.analysis_time }} minutes to determine the library type, impressive!
+
+          This was determined after subsetting your FASTQ files, that beforehand had an average quality of <a href="{% url 'guess-about'%}">{{ object.fin_avg_quality }}</a>, to {{ object.nr_of_seqs_fout }} amount of reads with an average quality of <a href="{% url 'guess-about'%}">{{ object.fout_avg_quality }}</a>.
+
+          After that, the GuessLib <a href="{% url 'guess-about' %}">algorithm</a> aligned your file against the {{ object.refgenome }} reference sequence.
+
+          We used {{ object.collected_pairs }} pairs and found {{ object.inwfwd }} inward-forward, {{ object.inwrvs}} inward-reverse, {{ object.outfwd }} outward-forward and {{ object.outrvs }} outward-reverse.
+          {% if object.libtype == "ISR" %}
+          <img src="{% static 'guess/libtype_figs/ISR.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <div class="table-responsive">
+          <table class="table">
+          <thead>
+          <tr>
+          <th class="th-lg"><span style="font-weight:bold">Program</span></th>
+          <th class="th-lg">Salmon &amp; Sailfish</th>
+          <th class="th-lg">Tophat &amp; Cufflinks</th>
+          <th class="th-lg">Trinity </th>
+          <th class="th-lg">Hisat2</th>
+          <th class="th-lg">Kallisto</th>
+          <th class="th-lg">FeatureCounts</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <th><span style="font-weight:bold">Lib type </span></th>
+          <td>-l ISR</td>
+          <td>--library-type fr-firststrand</td>
+          <td>--SS_lib_type 'RF'</td>
+          <td>--rna-strandness 'RF'</td>
+          <td>--rf-stranded</td>
+          <td>-s 2</td>
+          </tr>
+          </tbody>
+          </table>
+          </div>
+          {% elif object.libtype == "ISF"%}
+          <img src="{% static 'guess/libtype_figs/ISF.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <table class="minimalistBlack">
+          <thead>
+          <tr>
+          <th><span style="font-weight:bold">Program</span></th>
+          <th>Salmon &amp; Sailfish</th>
+          <th>Tophat &amp; Cufflinks</th>
+          <th>Trinity </th>
+          <th>Hisat2</th>
+          <th>Kallisto</th>
+          <th>FeatureCounts</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+          <td><span style="font-weight:bold">Lib type </span></td>
+          <td>-l ISF</td>
+          <td>--library-type fr-secondstrand</td>
+          <td>--SS_lib_type 'FR'</td>
+          <td>--rna-strandness 'FR'</td>
+          <td>--fr-stranded</td>
+          <td>-s 1</td>
+          </tr>
+          </tfoot>
+          </table>
+          {% elif object.libtype == "IU"%}
+          <img src="{% static 'guess/libtype_figs/IU.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <table class="minimalistBlack">
+          <thead>
+          <tr>
+          <th><span style="font-weight:bold">Program</span></th>
+          <th>Salmon &amp; Sailfish</th>
+          <th>Tophat &amp; Cufflinks</th>
+          <th>Trinity </th>
+          <th>Hisat2</th>
+          <th>Kallisto</th>
+          <th>FeatureCounts</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+          <td><span style="font-weight:bold">Lib type </span></td>
+          <td>-l IU</td>
+          <td>--library-type fr-unstranded</td>
+          <td><i>default</i></td>
+          <td><i>default</i></td>
+          <td><i>default</i></td>
+          <td>-s 0</td>
+          </tr>
+          </tfoot>
+          </table>
+          {% elif object.libtype == "O"%}
+          <img src="{% static 'guess/libtype_figs/O.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <table class="minimalistBlack">
+          <thead>
+          <tr>
+          <th><span style="font-weight:bold">Program</span></th>
+          <th>BWA</th>
+          <th>Novoalign</th>
+          <th>Bowtie 2</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+          <td><span style="font-weight:bold">Lib type </span></td>
+          <td>- - </td>
+          <td>-i MP</td>
+          <td>fastx_reverse_complement [-i INFILE] [-o OUTFILE]</td>
+          </tr>
+          </tfoot>
+          </table>
+          {% elif object.libtype == "I"%}
+          <img src="{% static 'guess/libtype_figs/I.png' %}" class="img-fluid rounded mx-auto d-block">
+          Use the corresponding flags for the different programs in the table below.
+          <table class="minimalistBlack">
+          <thead>
+          <tr>
+          <th><span style="font-weight:bold">Program</span></th>
+          <th>BWA</th>
+          <th>Novoalign</th>
+          <th>Bowtie 2</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+          <td><span style="font-weight:bold">Lib type </span></td>
+          <td>- - </td>
+          <td> - </td>
+          <td> - </td>
+          </tr>
+          </tfoot>
+          </table>
+          </tr>
+          </tfoot>
+          </table>
+          {% endif %}
+        </p>
+        {% endif%}
+      </div>
+    </article>
+{% endblock content2 %}
+
+<!-- objet to follow class view conventions -->
+<!-- This was determined after subsetting the fastQ file to (x) amount of reads with average quality (y) -->

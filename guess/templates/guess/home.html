@@ -1,0 +1,63 @@
+{% extends "guess/base.html" %}
+{% load static %}
+{% block home %}
+<section class="page-section bg-image id="imagedisplay">
+  <div class="container-fluid3">
+    <div class="row justify-content-center">
+      <img src="{% static 'guess/simple_image.jpeg' %}" alt="dna image" style="height: 650px; width: 100%;">
+    </div>
+    <div class="form-row text-center">
+    <div class="col-12">
+        <a id="submit" class="btn btn-dark" href="{% url 'guess-submit' %}" role="button">Submit a job</a>
+        <br>
+        <input class="checkbox" id="one" type="checkbox" name="one"/> I want to submit single reads
+    </div>
+  </div>
+  </div>
+</section>
+<br>
+<!--
+<div class="carousel-inner bg-image" role="listbox">
+    <div class="item active">
+    <img src="{% static 'guess/simple_image.jpeg'%}" align="center" alt="Image">
+    <div class="form-row text-center">
+    <div class="col-12">
+        <a id="submit" class="btn btn-dark" href="{% url 'guess-submit' %}" role="button">Submit a job</a>
+        <br>
+        <input class="checkbox" id="one" type="checkbox" name="one"/> I want to submit single reads
+    </div>
+  </div>
+</div>
+</div>
+ -->
+
+<!--Div class container for "more about guess lib"-->
+<div class="container-fluid1 bg-1">
+  <div class="col-sm-12 text-center">
+  <H3><font color="#ED585D" family="Raleway"><b><img src="{% static 'guess/GuessLib_greyscale.png'%}"  style="width: 100px; height: 100px;"; margin:2px 2px 2px 5px; alt="Greyscale_Image">   GuessLib</b></font></H3>
+  <br>
+  <p>An open-access tool for NGS library type recognition.</p>
+  </div>
+</div>
+</div>
+
+
+
+<script type="text/javascript" src="{% static 'guess/jquery-3.3.1.min.js' %}">
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#one').click(function() {
+            if ($(this).is(':checked')) {
+                $("a").attr("href","{% url 'guess-submit_one' %}");
+            } else {
+                $("a").attr("href","{% url 'guess-submit' %}");
+            }
+        });
+    });
+</script>
+{% endblock home %}
+
+
+
+
