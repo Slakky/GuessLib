@@ -1,0 +1,13 @@
+{% extends "guess/base.html" %}
+{% block content %}
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          <a class="mr-2" href="#">{{ result.author }}</a>
+          <small class="text-muted">{{ result.date_submit }}</small>
+        </div>
+        <h2><a class="article-title" href="#">{{ result.title }}</a></h2>
+        <p class="article-content">{{ result.statistics }}</p>
+      </div>
+    </article>
+{% endblock content %}

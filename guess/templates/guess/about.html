@@ -1,0 +1,82 @@
+{% extends "guess/base.html" %}
+{% load static %}
+
+{% block about %}
+<h2 class="text-center" class="h5-new">About GuessLib</h2>
+<br>
+<div class= "text-justify">
+    <p>Guesslib_pair.py takes the pair of fastq files that user needs to specify with keys -f1 and -f2 respectively, the reference sequence (needs to be specified with -r key), and provides user with decision made on the read library type.</p>
+    <p>Guesslib_pair.py uses the algorithm of <a href="https://genome.ucsc.edu/goldenPath/help/blatSpec.html" class="new-a">BLAT tool</a> (Standalone BLAT sequence search command line tool). Please see BLAT specifications and user guide for more details.</p>
+    <h5 class="h5-new">1. Pairwise alignment with BLAT</h5>
+    <p>Every sequence that is passed filtering treshold specified in fastq-checker.py is used to find the similar motifs in reference sequence. Every sequence that has 95% or greater identity is returned. At the same time BLAT returns user the Expected value (e-value). E-value is a parameter that describes the number of hits one can "expect" to see by chance when searching a database of a particular size. Only hits with significant e-values are reported to user.</p>
+    <h5 class="h5-new">2. Correct BLAT hit</h5>
+    <p>Every output of the BLAT run that returns only one significant hit is considered to be correct one. Therefore, BLAT continues to iterate over the first fastq file with the R1 reads stored until it finds the correct BLAT hit. If BLAT return zero or multiple hits, the result is not stored, and the next R1 sequence is the first fastq file is used to align it against the reference.</p>
+    <h5 class="h5-new">3. Pairwise alignment for correspondent read</h5>
+    <p>Once BLAT finds the correct hit it stops iterating over the first fastq file. At this point it opens the second fastq file with the R2 reads stored, and looks for the read with the same header. When NGS is done, the R1 and R2 reads come from the same fragment of DNA. Therefore, based on the read relative composition, it is possible to identify the library type that was used to make sequencing library. BLAT continues to iterate over the second fastq file with the R2 reads stored until it finds the correct BLAT hit. If BLAT return zero or multiple hits, the result is not stored, and the next R2 sequence is the first second file is used to align it against the reference. Once the correct BLAT hit with R2 is found, the coordinates of the reference where R1 and R2 are aligned are evaluated.</p>
+    <h5 class="h5-new">4. Making decision in Inward/Outward relative orientation</h5>
+    <p>If the first aligned base of R1 is found to be upstream of the last aligned base of R1, and the first aligned base of R2 is found to be downstream of the last aligned base of R2 then the orientation of read pair is <b>Inward</b>.</p>
+    <br>
+    <img src="{% static 'guess/about/inward.png' %}" class="img-fluid rounded mx-auto d-block">
+    <br>
+    <p>If the first aligned base of R1 is found to be downstream of the last aligned base of R1, and the first aligned base of R2 is found to be upstream of the last aligned base of R2 then the orientation of read pair is <b>Outward</b>.</p>
+    <br>
+    <img src="{% static 'guess/about/outward.png' %}" class="img-fluid rounded mx-auto d-block">
+    <br>
+    <h5 class="h5-new">5. Making decision on Forward/Reverse relative orientation:</h5>
+    <p>If R1 midpoint coordinates align upstream to the reference sequence, and the R2 midpoint coordinates align downstream then the orientation of read pair is <b>Forward</b>. If R2 midpoint coordinates align upstream to the reference sequence, and the R1 midpoint coordinates align downstream then the orientation of read pair is <b>Reverse</b>.</p>
+    <br>
+    <img src="{% static 'guess/about/forward-reverse.png' %}" class="img-fluid rounded mx-auto d-block">
+    <br>
+    <h5>6. Making decision on Strand specific/Unstranded library type</h5>
+    <p>For making a decision if the library type of reads is strand specific or unstranded the Fisher exact test is used. Guesslib_pair.py script was used against the test datasets with known information about Strand specificity until the number of correct hits reached 300. Based on the number of pairs with Forward and Reverse relative orientation, the contingency table was constructed.</p>
+    <table class="minimalistBlack">
+    <thead>
+            <tr>
+                <td class="tg-c3ow">Number of reads</th>
+                <td class="tg-c3ow">Forward orientation </th>
+                <td class="tg-c3ow">Reverse orientation</th>
+                <td  class="tg-c3ow">Total</th>
+            </tr>
+    </thead>
+    <tr>
+        <td class="tg-c3ow">Experiment run</td>
+        <td class="tg-c3ow">a</td>
+        <td class="tg-c3ow">b</td>
+        <td class="tg-c3ow">a + b</td>
+    </tr>
+    <tr>
+        <td class="tg-baqh">Test run</td>
+        <td class="tg-baqh">c</td>
+        <td class="tg-baqh">300</td>
+        <td class="tg-baqh">300 + c</td>
+    </tr>
+    <tr>
+        <td class="tg-baqh">Total</td>
+        <td class="tg-baqh">a + c</td>
+        <td class="tg-baqh">300 + b</td>
+        <td class="tg-baqh"></td>
+    </tr>
+    </table>
+    <br>
+    <p>Once Guesslib_pair.py collects ten correct BLAT hits, the data collected during the experiment run is tested against the data collected for the test datasets (test run). If the null hypothesis for a given library type accepted at the same time as the alternative hypothesis for every other library type are accepted, then the data from the experiment run comes from the same distribution. In such case reads from fastq files have the same library type as reads from the test dataset where we accepted the null hypothesis.</p>
+    <p>If conditions are not met, Guesslib_pair.py collects more hits. After each hit the Fisher exact test is performed again. Once the condition about the null hypothesis is met the library type is determined. If after 30 correct hits Guesslib_pair.py still cannot determine the library type correctly, the script stop working, and user informed that the library type cannot be determined for data submitted.</p>
+    <h5 class="h5-new">7. Making decision on Inward/Outward library type for genomic data</h5>
+    <p>If Inward/Outward relative orientation cannot be determined from exome reference sequence then the submitted data considered to be genomic as there are no reads that come from the same transcripts.  Therefore the mate pair NGS library was done out of genomic fragments.</p>
+    <p>In such cases the Fisher exact test is used to determine the Inward/Outward library type. Done as described in 6.</p>
+</div>
+
+<h2 class="text-center" class="h5-new">About FASTQ checker</h2>
+<br>
+<div class="text-justify">
+    <p>The purpose of the ‘fastq-checker’ scripts is two-fold. Firstly, it is to make sure that the uploaded files contain fastq-sequences in the expected format for the the guesslib script to function. Secondly, it is to increase the efficiency of the guesslib function by removing low quality sequences.</p>
+    <p>If the user uploads a file with single end sequences, the fastq_checker_single.py program is called, and likewise for pair-end sequences, instead triggering the fastq_checker_pair.py program. Both work in the same way, with some extended functionalities of the paired script.</p>
+    <h5 class="h5-new">Proper format?</h5>
+    <p>Fastq files are utf-8 encoded text files that contain the raw output of sequencing machines. The information of one sequence is relayed over four lines in the file. Since the canonical sequencing method relies on sequencing fragments, the number of lines of these files is often huge. For paired data, where a fragment has been sequenced from both ends, the sequences are split in two files where the first part of the identifiers of the corresponding pairs are the same.</p>
+    <p>The first line of the file is the header. This is unique for each fragment and always starts with the character ‘@’. The second line contains the sequenced bases of typical length ~ 100-150 base pairs. The line will only contain the characters ‘A’, ‘G’, ‘C’, ‘T’ or ‘N’. The third line contains a ‘+’ that gives no information. The fourth line is a string of characters corresponding to each base in the second line. This is the “quality-measure”. The probability that the base was mis-sequenced is calculated using the ascii-value of this character subtracted by 33. </p>
+    <p>While opening the file, the program makes sure that it is in fact a text file, and while reading, it checks whether the contents are utf-8 encoded. The program will loop through the entire inputted file and for each line it makes sure that the lines start with and contain only the expected characters. It also makes sure that there is a quality-character corresponding to each base. If any of this is not true, the program will return a false.</p>
+    <h5 class="h5-new">Filtering</h5>
+    <p>To filter out the bad quality sequences, the program calculates the average quality for each sequence. If the quality is above the threshold specified as a global variable, the corresponding sequence will be appended to a new file. Else, it is passed. However, if the number of sequences are too few, specified by another global variable, the threshold will be lowered, and the file be iterated over again. In this way, the new file is sorted in blocks, with the highest quality block at the top. This ensures that the guesslib function have high quality reads to work with for the first alignments. </p>
+    <p>For single files, this means that the filtering process is done. However, if the process is stopped here for paired files, it is possible that the new files will not contain both of the pairs for each fragment. Because of this, a condition for appending sequences to the new files is that both of the pairs are above the quality threshold.</p>
+    <p>If the files have been checked, and the filtering is successful. The programs return a true. This will put the outputted, filtered files in the queue for being run with the guesslib program. Because the program is calculating the average quality for all sequences in the file, the in-files’ and the filtered files’ average qualities will also be returned to the user. </p>
+</div>
+{% endblock about %}

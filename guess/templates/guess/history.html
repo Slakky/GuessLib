@@ -1,0 +1,41 @@
+{% extends "guess/base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% for result in results %}
+  {% if result.libtype and result.progress == 2 %}
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          <a class="mr-2" href="{% url 'profile' %}">{{ result.author }}</a>
+          <small class="text-muted">{{ result.date_submit }}</small>
+        </div>
+        <h2><a class="article-title" href="{% url 'result-detail' result.id %}">{{ result.title }}</a></h2>
+        <p class="article-content">Libraty type: {{ result.libtype }}</p>
+      </div>
+    </article>
+    {% elif not result.libtype and result.progress == 1 %}
+      <article class="media content-section">
+        <div class="media-body">
+          <div class="article-metadata">
+            <a class="mr-2" href="{% url 'profile' %}">{{ result.author }}</a>
+            <small class="text-muted">{{ result.date_submit }}</small>
+          </div>
+          <h2><a class="article-title">{{ result.title }}</a></h2>
+          <p class="article-content">In Progress</p>
+        </div>
+      </article>
+      {% elif not result.libtype and result.progress == 0 %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{% url 'profile' %}">{{ result.author }}</a>
+              <small class="text-muted">{{ result.date_submit }}</small>
+            </div>
+            <h2><a class="article-title">{{ result.title }}</a></h2>
+            <p class="article-content">In Queue</p>
+          </div>
+        </article>
+    {% endif %}
+{% endfor %}
+{% endblock content %}
+<!-- % url 'result-detail result.id % instead of # when possible -->

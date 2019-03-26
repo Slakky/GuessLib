@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="shortcut icon" type="image/png" sizes="16x16" href="{% static 'guess/favicon-32x32.png'%}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'guess/main.css' %}">
+
+
+    {% if title %}
+        <title>GuessLib - {{ title }}</title>
+    {% else %}
+        <title>GuessLib</title>
+    {% endif %}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  </head>
+  <body>
+      <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-light bg-steel fixed-top">
+          <div class="container">
+            <a class="navbar-brand mr-4" href="{% url 'guess-home' %}">
+              <img src="{% static 'guess/guesslib_png.png'%}" width="45px" height="45px"/></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+              <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link" href="{% url 'guess-home' %}">Home</a>
+                <a class="nav-item nav-link" href="{% url 'guess-about' %}">About</a>
+                <a class="nav-item nav-link" href="{% url 'guess-submit'%}">Submit a Job</a>
+                {% if user.is_authenticated %}
+                  <a class="nav-item nav-link" href="{% url 'history'%}">My jobs</a>
+                {% endif %}
+              </div>
+              <!-- Navbar Right Side -->
+              <div class="navbar-nav">
+                {% if user.is_authenticated %}
+                  <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                  <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                  <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                  <a class="nav-item nav-link" href="{% url 'django_registration_register' %}">Register</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+      {% block home %}{% endblock home %}
+      <main role="main" class="container">
+        <!-- Including right links(Parent) -->
+        <div class="row col">
+          <!-- Only left links(Parent)-->
+          <div class="col-md-8">
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+          </div>
+        </div>
+        {% block content2 %}{% endblock content2 %}
+        {% block about %}{% endblock about %}
+
+      <!-- Footer -->
+      <!--Contact Section -->
+<section class="page-section" id="Contact">
+<div class="container-fluid2 bg-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 text-center">
+        <H2 class="mt-0"><font family="Raleway"><b>Where to find us?</b></H2>
+        <hr class="divider">
+        <p class="text-muted mb-5"> Try reaching us out at either of the two and we will get back to you as soon as possible!</p>
+    </font>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4 ml-auto text-center">
+      <i class ="fas fa-pin fa-3x text-muted"></i>
+      <a href="https://www.google.com/maps/place/Polacksbacken/@59.8409846,17.6472565,17z/data=!4m5!3m4!1s0x465fc95ff71a67c5:0x95c816c01164850a!8m2!3d59.8409819!4d17.6494453"><img src="{% static 'guess/pin_location.jpg' %}" style="width: 50px; height: 50px;"></a>
+      <div>Guess Lib|Uppsala University, Sweden</div>
+    </div>
+
+    <div class="col-lg-4 mr-auto text-center">
+      <i class="fas fa-envelope fa-3x text-muted"></i>
+      <a href="{% url 'contact' %}">
+          <img src="{% static 'guess/mail.png' %}" style="width: 50px; height: 50px;">
+        </a>
+      <div>Don't be shy! Ask us anything</div>
+    </div>
+  </div>
+</section>
+</main>
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script type="text/javascript" src="{% static 'guess/jquery-3.3.1.min.js' %}"></script>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
+

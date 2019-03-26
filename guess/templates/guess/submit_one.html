@@ -1,0 +1,25 @@
+{% extends "guess/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="content-section">
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+      <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Submit your job</legend>
+          {{ submited_form|crispy }}
+      </fieldset>
+        <div class="form-group">
+          <button class="btn btn-dark" type="submit">Submit</button>
+        </div>
+    </form>
+    <div class="border-top pt-3">
+      <small class="text-muted">
+        You don't have an account? <a class="ml-2" href="{% url 'django_registration_register' %}">Sign In</a>
+      </small>
+      <br>
+      <small class="text-muted">
+        You wanted to submit pair reads? Gotcha<a class="ml-2" href="{% url 'guess-submit' %}">Submit pair</a>
+      </small>
+    </div>
+  </div>
+{% endblock content %}
